@@ -181,5 +181,6 @@ There are few key reasons why the ability the read delta tables from [Synapse SQ
 Please give this approach a try and let me know if you run into any issues with this, here are few things to note
 *   I noticied that the SQL serverless "[result].filename()  IN " clause seems to  apply the filters after it reads the data, so you may notice a slightly higher amount of data processed for the query, which in turn may increase the query cost.  I am investigating options to see if this can be reduced further.
 *   I tried a slightly different variation of this query that uses ".filename NOT IN" approach that slighty reduced the data scanned volume, the query can be found here \synapse_serverless_query folder
-*   I havent tested if this approach handles the schema drift of the Delta schema
+*   I have not tested if this approach handles the schema drift of the Delta schema
+*   This code was tested with databricks delta tables, not with the open source version of Delta. 
 
