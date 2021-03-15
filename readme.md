@@ -134,8 +134,8 @@ FROM
 ```
 
 If you want to try the below query with your own delta tables, you need to change the path as below (in 3 places)
-    * In the outer query (1 replacement),  replace the path to the parquet files
-    * In the inner query (2 replacements), replace the path to the .JSON metadata files
+* In the outer query (1 replacement),  replace the path to the parquet files
+* In the inner query (2 replacements), replace the path to the .JSON metadata files
 
 https://tpchdata.dfs.core.windows.net/zztest/Delta_SUPPLIER
 
