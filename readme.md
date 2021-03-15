@@ -80,8 +80,7 @@ WHERE [result].filename()  IN
 )
 ```
 
-Once we replace the subquery with the query that get the list of active files,the final query will look as below.
-
+Once we replace the subquery with the query that gets the list of active files,the final query will look as below.
 
 
 
@@ -134,7 +133,9 @@ FROM
 
 ```
 
-If you want to try the below query with your own delta tables, please note that you need to find the below ADLS gen2 path and replace it with your folder path (in 3 places)
+If you want to try the below query with your own delta tables, you need to change the path as below (in 3 places)
+    * In the outer query (1 replacement),  replace the path to the parquet files
+    * In the inner query (2 replacements), replace the path to the .JSON metadata files
 
 https://tpchdata.dfs.core.windows.net/zztest/Delta_SUPPLIER
 
