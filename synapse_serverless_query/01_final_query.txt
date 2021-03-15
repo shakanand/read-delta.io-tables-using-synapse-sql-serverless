@@ -1,0 +1,42 @@
+SELECT
+    TOP 100 
+        *
+FROM
+    OPENROWSET(
+        BULK 'https://tpchdata.dfs.core.windows.net/zztest/Delta_SUPPLIER/*.parquet',
+        FORMAT='PARQUET'
+    ) AS [result]
+WHERE [result].filename() 
+IN 
+(
+    SELECT 
+    JSON_VALUE(c1.value,'$.add.path')    as filename
+FROM
+    OPENROWSET(
+        BULK 'https://tpchdata.dfs.core.windows.net/zztest/Delta_SUPPLIER/_delta_log/*.json',
+        FORMAT = 'CSV',
+        FIELDQUOTE = '0x0b',
+        FIELDTERMINATOR ='0x0b',
+        ROWTERMINATOR = '\n'
+    )
+    WITH (
+        jsonContent varchar(MAX)
+    ) AS [result]
+    CROSS APPLY OPENJSON('{"AllJSON":[' + REPLACE(REPLACE( jsonContent,CHAR(10),''),'}{','},{') + ']}','$.AllJSON') c1
+WHERE LEFT(c1.value,5) = '{"add'
+    EXCEPT
+SELECT 
+    JSON_VALUE(c1.value,'$.remove.path')    as filename
+FROM
+    OPENROWSET(
+        BULK 'https://tpchdata.dfs.core.windows.net/zztest/Delta_SUPPLIER/_delta_log/*.json',
+        FORMAT = 'CSV',
+        FIELDQUOTE = '0x0b',
+        FIELDTERMINATOR ='0x0b',
+        ROWTERMINATOR = '\n'
+    )
+    WITH (
+        jsonContent varchar(MAX)
+    ) AS [result]
+    CROSS APPLY OPENJSON('{"AllJSON":[' + REPLACE(REPLACE( jsonContent,CHAR(10),''),'}{','},{') + ']}','$.AllJSON') c1
+    WHERE LEF
