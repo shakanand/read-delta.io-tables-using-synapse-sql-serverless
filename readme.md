@@ -87,19 +87,20 @@ Once we replace the subquery with the query that get the list of active files,th
 
 ```sql
 SELECT
-        [result].*
+    *
 FROM
     OPENROWSET(
-        BULK 'https://tpchdata.dfs.core.windows.net/zztest/deltatable03/*.parquet',
+        BULK 'https://tpchdata.dfs.core.windows.net/zztest/Delta_SUPPLIER/*.parquet',
         FORMAT='PARQUET'
     ) AS [result]
-WHERE [result].filename()  IN 
+WHERE [result].filename() 
+IN 
 (
-SELECT 
-	JSON_VALUE(c1.value,'$.add.path')    as filename
+    SELECT 
+    JSON_VALUE(c1.value,'$.add.path')    as filename
 FROM
     OPENROWSET(
-        BULK 'https://tpchdata.dfs.core.windows.net/zztest/deltatable03/_delta_log/*.json',
+        BULK 'https://tpchdata.dfs.core.windows.net/zztest/Delta_SUPPLIER/_delta_log/*.json',
         FORMAT = 'CSV',
         FIELDQUOTE = '0x0b',
         FIELDTERMINATOR ='0x0b',
@@ -108,14 +109,14 @@ FROM
     WITH (
         jsonContent varchar(MAX)
     ) AS [result]
-	CROSS APPLY OPENJSON('{"AllJSON":[' + REPLACE(REPLACE( jsonContent,CHAR(10),''),'}{','},{') + ']}','$.AllJSON') c1
+    CROSS APPLY OPENJSON('{"AllJSON":[' + REPLACE(REPLACE( jsonContent,CHAR(10),''),'}{','},{') + ']}','$.AllJSON') c1
 WHERE LEFT(c1.value,5) = '{"add'
-	EXCEPT
+    EXCEPT
 SELECT 
-	JSON_VALUE(c1.value,'$.remove.path')    as filename
+    JSON_VALUE(c1.value,'$.remove.path')    as filename
 FROM
     OPENROWSET(
-        BULK 'https://tpchdata.dfs.core.windows.net/zztest/deltatable03/_delta_log/*.json',
+        BULK 'https://tpchdata.dfs.core.windows.net/zztest/Delta_SUPPLIER/_delta_log/*.json',
         FORMAT = 'CSV',
         FIELDQUOTE = '0x0b',
         FIELDTERMINATOR ='0x0b',
@@ -124,17 +125,21 @@ FROM
     WITH (
         jsonContent varchar(MAX)
     ) AS [result]
-	CROSS APPLY OPENJSON('{"AllJSON":[' + REPLACE(REPLACE( jsonContent,CHAR(10),''),'}{','},{') + ']}','$.AllJSON') c1
-	WHERE LEFT(c1.value,5) = '{"rem'
+    CROSS APPLY OPENJSON('{"AllJSON":[' + REPLACE(REPLACE( jsonContent,CHAR(10),''),'}{','},{') + ']}','$.AllJSON') c1
+    WHERE LEFT(c1.value,5) = '{"rem'
 )
+
+
+
+
 ```
 
 If you want to try the below query with your own delta tables, please note that you need to find the below ADLS gen2 path and replace it with your folder path (in 3 places)
 
-https://tpchdata.dfs.core.windows.net/zztest/deltatable03
+https://tpchdata.dfs.core.windows.net/zztest/Delta_SUPPLIER
 
 
-If you want to make this easier for your end users to access delta tables via SSMS or other tools, you may want to create this SQL query as view in an user database in SQL servreless as below.
+If you want to make this easier for your end users to access delta tables via SSMS or other tools, you may want to create this SQL query as view in an user database in SQL serverless as below.
 
 ![Delta files](screenshots/006_create_view_for_delta_table.jpg)
 
@@ -146,7 +151,7 @@ End users can query this view directly from Synapse Studio,SSMS or other client 
 
 # Query Cost
 
-Here is the dataset that used for documenting the query performance.
+Here is the dataset that i used for documenting the query performance.
 Item | Value
 --|--:|
 Number of rows | 10,000,000
