@@ -17,6 +17,8 @@ The file that is highlighted in RED is marked as inactive and a new file highlig
 
 All the information about the files that are marked as inactive and the new files that are added are kept in a JSON file in the "_delta_log" folder.
 
+More details on the "_delta_log" folder can be found [here](https://github.com/delta-io/delta/blob/master/PROTOCOL.md)
+
 ![Delta files](screenshots/003_delta_log_files_json.jpg)
 
 Sample contents of one of the log files "00000000000000000001.json" that shows the list of parquet files that are inactivated and the newly added files.
@@ -135,7 +137,7 @@ FROM
 
 If you want to try the below query with your own delta tables, you need to change the path as below (in 3 places)
 * In the outer query (1 replacement),  replace the path to the parquet files
-* In the inner query (2 replacements), replace the path to the .JSON metadata files
+* In the inner query (2 replacements), replace the path to the .JSON metadata files in "_delta_log" folder
 
 https://tpchdata.dfs.core.windows.net/zztest/Delta_SUPPLIER
 

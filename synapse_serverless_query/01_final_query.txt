@@ -1,6 +1,5 @@
 SELECT
-    TOP 100 
-        *
+    TOP 100 *
 FROM
     OPENROWSET(
         BULK 'https://tpchdata.dfs.core.windows.net/zztest/Delta_SUPPLIER/*.parquet',
@@ -39,4 +38,8 @@ FROM
         jsonContent varchar(MAX)
     ) AS [result]
     CROSS APPLY OPENJSON('{"AllJSON":[' + REPLACE(REPLACE( jsonContent,CHAR(10),''),'}{','},{') + ']}','$.AllJSON') c1
-    WHERE LEF
+    WHERE LEFT(c1.value,5) = '{"rem'
+)
+
+
+
